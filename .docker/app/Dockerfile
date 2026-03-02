@@ -8,7 +8,8 @@ RUN apk add --no-cache \
     icu-dev \
     oniguruma-dev \
     libzip-dev \
-    bash
+    bash \
+    supervisor
 
 # PHP extensions
 RUN docker-php-ext-install \
@@ -23,4 +24,9 @@ RUN docker-php-ext-install \
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Supervisord
+COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 WORKDIR /var/www/html
+
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

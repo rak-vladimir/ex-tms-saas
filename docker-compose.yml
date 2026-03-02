@@ -10,7 +10,6 @@ services:
             - .docker/app/local.ini:/usr/local/etc/php/conf.d/local.ini
         depends_on:
             - database
-
     database:
         image: postgres:17-alpine
         restart: unless-stopped
@@ -24,7 +23,6 @@ services:
             - postgres-volume:/var/lib/postgresql/data
         networks:
             - lan
-
     nginx:
         image: nginx:alpine
         ports:
@@ -36,32 +34,6 @@ services:
             - lan
         depends_on:
             - app
-
-    queue:
-        build:
-            context: .
-            dockerfile: .docker/app/Dockerfile
-        command: php artisan queue:work --verbose --tries=3 --timeout=90
-        volumes:
-            - .:/var/www/html
-        networks:
-            - lan
-        depends_on:
-            - app
-            - database
-
-    scheduler:
-        build:
-            context: .
-            dockerfile: .docker/app/Dockerfile
-        command: php artisan schedule:work
-        volumes:
-            - .:/var/www/html
-        networks:
-            - lan
-        depends_on:
-            - app
-
 networks:
     lan:
         driver: bridge
