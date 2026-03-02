@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\OrderStatus;
 use App\Models\Traits\HasTenant;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -28,8 +27,6 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
  */
 class Order extends Model
 {
-    /** @use HasFactory<\Database\Factories\CourierFactory> */
-    use HasFactory;
     use HasTenant;
 
     public const UPDATED_AT = null;

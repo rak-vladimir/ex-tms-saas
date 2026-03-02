@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Traits\HasTenant;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,8 +14,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Assignment extends Model
 {
-    /** @use HasFactory<\Database\Factories\AssignmentFactory> */
-    use HasFactory;
     use HasTenant;
 
     public const CREATED_AT = 'assigned_at';

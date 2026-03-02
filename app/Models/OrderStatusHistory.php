@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\OrderStatus;
 use App\Models\Traits\HasTenant;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -17,8 +16,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class OrderStatusHistory extends Model
 {
-    /** @use HasFactory<\Database\Factories\OrderStatusHistoryFactory> */
-    use HasFactory;
     use HasTenant;
 
     public const UPDATED_AT = null;

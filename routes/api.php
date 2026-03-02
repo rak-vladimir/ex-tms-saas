@@ -6,7 +6,7 @@ use App\Http\Middleware\TenantMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(TenantMiddleware::class)->group(function () {
-    // Заказы
+    // Orders
     Route::controller(OrderController::class)->prefix('orders')->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
@@ -15,7 +15,7 @@ Route::middleware(TenantMiddleware::class)->group(function () {
         Route::post('{order}/status', 'updateStatus');
     });
 
-    // Курьеры
+    // Couriers
     Route::controller(CourierController::class)->prefix('couriers')->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');

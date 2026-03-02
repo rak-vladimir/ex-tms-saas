@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn() => response()->json([
+    'name'   => 'Mini TMS API',
+    'status' => 'active',
+    'php'    => PHP_VERSION,
+]));

@@ -6,7 +6,6 @@ use App\Enums\OrderStatus;
 use App\Models\Assignment;
 use App\Models\Courier;
 use App\Models\Order;
-use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -14,17 +13,33 @@ class OrderService
 {
     public function create(array $data): Order
     {
-        $tenant = app(Tenant::class);
+        $tenant = tenant();
+
+        if (! $tenant) {
+            throw new \RuntimeException('Tenant is not set');
+        }
 
         return DB::transaction(function () use ($data, $tenant) {
             if (! empty($data['external_id'])) {
-                $order = Order::firstWhere([
+                $order = Order::firstOrNew([
                     'tenant_id'   => $tenant->id,
                     'external_id' => $data['external_id'],
                 ]);
-                if ($order) {
-                    return $order;
-                }
+
+                $order->fill([
+                    'customer_name'    => $data['customer_name'],
+                    'phone'            => $data['phone'],
+                    'pickup_address'   => $data['pickup_address'],
+                    'delivery_address' => $data['delivery_address'],
+                    'delivery_date'    => $data['delivery_date'],
+                    'status'           => OrderStatus::NEW,
+                ]);
+
+                $order->save();
+
+                $this->addStatusHistory($order, OrderStatus::NEW);
+
+                return $order;
             }
 
             $order = Order::create([
@@ -80,6 +95,26 @@ class OrderService
             $this->addStatusHistory($order, $newStatus, $meta);
 
             return $order;
+        });
+    }
+
+    public function cancelByTimeout(int $orderId, int $tenantId): void
+    {
+        DB::transaction(function () use ($orderId, $tenantId) {
+            $order = Order::withoutGlobalScope(TenantScope::class)
+                ->where('id', $orderId)
+                ->where('tenant_id', $tenantId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($order->status !== OrderStatus::NEW) {
+                return;
+            }
+
+            $this->changeStatus($order, OrderStatus::CANCELLED, [
+                'reason'    => 'system_timeout_30m',
+                'automated' => true
+            ]);
         });
     }
 

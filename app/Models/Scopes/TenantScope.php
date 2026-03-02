@@ -14,7 +14,10 @@ class TenantScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if ($tenantId = app(CurrentTenant::class)->id()) {
+        // Do that because helper tenant() don't work in queue
+        $tenant = app(CurrentTenant::class);
+
+        if ($tenantId = $tenant->id()) {
             $builder->where(
                 $model->getTable() . '.tenant_id',
                 $tenantId

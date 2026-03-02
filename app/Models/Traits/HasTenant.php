@@ -13,7 +13,7 @@ trait HasTenant
 
         static::creating(function ($model) {
             if (! $model->tenant_id) {
-                $model->tenant_id = app(CurrentTenant::class)->id();
+                $model->tenant_id = tenant()->id;
             }
         });
     }
